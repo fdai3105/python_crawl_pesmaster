@@ -25,6 +25,9 @@ class PesmaterItem(scrapy.Item):
     age = scrapy.Field()
     pos = scrapy.Field()
     player_style = scrapy.Field()
+    com_style = scrapy.Field()
+    player_skills = scrapy.Field()
+    img_avatar = scrapy.Field()
     img_card = scrapy.Field()
 
     # attack
