@@ -29,6 +29,8 @@ class PesmaterItem(scrapy.Item):
     player_skills = scrapy.Field()
     img_avatar = scrapy.Field()
     img_card = scrapy.Field()
+    player_max_level = scrapy.Field()
+    player_stats = scrapy.Field()
 
     # attack
     attacking_total = scrapy.Field()
