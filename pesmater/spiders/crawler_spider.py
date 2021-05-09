@@ -1,9 +1,7 @@
 import scrapy
 from scrapy import Spider
 from scrapy.selector import Selector
-from scrapy.loader import ItemLoader
-
-from pesmater.items import PesmaterItem
+from pesmater.items import PesmasterPlayer
 from urllib.parse import urljoin
 import json
 
@@ -17,6 +15,7 @@ class CrawlerSpider(Spider):
     page = 0
 
     def parse(self, response):
+
         questions = Selector(response).xpath('//tbody/tr')
 
         for question in questions:
@@ -26,7 +25,7 @@ class CrawlerSpider(Spider):
             yield scrapy.Request(url=urljoin(response.url, url), callback=self.parse_detail,
                                  meta={'avatar': avatar, 'url': urljoin(response.url, url)})
 
-        if self.page <= 10:
+        if self.page <= 50:
             self.page += 1
             url = 'https://www.pesmaster.com/pes-2021/search/search.php?myclub=yes&sort=ovr&sort_order=desc&page=' + str(
                 self.page)
@@ -35,7 +34,7 @@ class CrawlerSpider(Spider):
     def parse_detail(self, response):
         detail = response.xpath('//*')
 
-        item = PesmaterItem()
+        item = PesmasterPlayer()
 
         item['name'] = detail.xpath('figure/div[@class="player-card-name"]/text()').extract_first()
         item['ovr'] = detail.xpath('figure/div[@class="player-card-ovr"]/text()').extract_first()
@@ -54,7 +53,7 @@ class CrawlerSpider(Spider):
             if i == len(ds) - 1:
                 item[name] = item_detail.xpath('td/a/text()').get()
             else:
-                item[name] = str(item_detail.xpath('td/text()').extract()[1])[1:]
+                item[name] = item_detail.xpath('td/text()').extract()[1]
 
         item['player_stats'] = json.loads(str(detail.xpath('script/text()').re('.*levelStats.*'))[25:][:-3])
 

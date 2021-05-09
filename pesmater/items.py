@@ -6,10 +6,29 @@
 import scrapy
 
 
-class PesmaterItem(scrapy.Item):
-    # define the fields for your item here like:
+class PesmasterSquad(scrapy.Item):
+    name = scrapy.Field()
+    img = scrapy.Field()
+    url = scrapy.Field()
+    ovr = scrapy.Field()
+    defence = scrapy.Field()
+    midfield = scrapy.Field()
+    attack = scrapy.Field()
+    speed = scrapy.Field()
+    strength = scrapy.Field()
 
+    players = scrapy.Field()
+
+
+class PesmasterNation(scrapy.Item):
+    name = scrapy.Field()
+    img = scrapy.Field()
+    teams = scrapy.Field()
+
+
+class PesmasterPlayer(scrapy.Item):
     debug = scrapy.Field()
+    nation = scrapy.Field()
     name = scrapy.Field()
     desc = scrapy.Field()
     ovr = scrapy.Field()
