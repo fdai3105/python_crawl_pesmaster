@@ -6,7 +6,7 @@
 import scrapy
 
 
-class PesmasterSquad(scrapy.Item):
+class PesTeam(scrapy.Item):
     name = scrapy.Field()
     img = scrapy.Field()
     url = scrapy.Field()
@@ -16,19 +16,26 @@ class PesmasterSquad(scrapy.Item):
     attack = scrapy.Field()
     speed = scrapy.Field()
     strength = scrapy.Field()
-
     players = scrapy.Field()
+    team_id = scrapy.Field()
+
+
+class PesLeague(scrapy.Item):
+    name = scrapy.Field()
+    img = scrapy.Field()
+    url = scrapy.Field()
+    league_id = scrapy.Field()
 
 
 class PesmasterNation(scrapy.Item):
     name = scrapy.Field()
     img = scrapy.Field()
-    teams = scrapy.Field()
 
 
-class PesmasterPlayer(scrapy.Item):
+class PesPlayer(scrapy.Item):
     debug = scrapy.Field()
-    nation = scrapy.Field()
+    league = scrapy.Field()
+    team = scrapy.Field()
     name = scrapy.Field()
     desc = scrapy.Field()
     ovr = scrapy.Field()
