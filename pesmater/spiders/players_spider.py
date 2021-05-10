@@ -1,16 +1,17 @@
+import json
+
 import scrapy
 from scrapy import Spider
 from scrapy.selector import Selector
 from pesmater.items import PesPlayer, PesLeague, PesTeam
 from urllib.parse import urljoin
-import json
 
 
 class PlayersSpider(Spider):
     name = "players"
     allowed_domains = ["pesmaster.com"]
     start_urls = [
-        "https://www.pesmaster.com/pes-2021/search/search.php?myclub=yes&sort=ovr&sort_order=desc&page=",
+        "https://www.pesmaster.com/pes-2021/search/search.php?type=default&sort=ovr&sort_order=desc&page=",
     ]
     page = 0
     end_page = 635
@@ -26,7 +27,7 @@ class PlayersSpider(Spider):
             yield scrapy.Request(url=urljoin(response.url, url), callback=self.parse_detail,
                                  meta={'avatar': avatar, 'url': urljoin(response.url, url)})
 
-        if self.page <= 50:
+        if self.page <= 100:
             self.page += 1
             url = 'https://www.pesmaster.com/pes-2021/search/search.php?type=default&sort=ovr&sort_order=desc&page=' \
                   + str(self.page)
@@ -36,7 +37,6 @@ class PlayersSpider(Spider):
         detail = response.xpath('//*')
 
         item = PesPlayer()
-
         league = PesLeague()
         team = PesTeam()
 
@@ -45,15 +45,15 @@ class PlayersSpider(Spider):
         if select:
             if len(select) > 1:
                 team['team_id'] = str(select[0].xpath('@href').get()).split('/')[4]
-                team['img'] = img_url + str(select[0].xpath('@href').get()).split('/')[4] + '.png'
                 team['name'] = select[0].xpath('text()').get()
+                team['img'] = img_url + str(select[0].xpath('@href').get()).split('/')[4] + '.png'
                 league['league_id'] = str(select[1].xpath('@href').get()).split('/')[4]
-                league['img'] = img_url + str(select[1].xpath('@href').get()).split('/')[4].zfill(6) + '.png'
                 league['name'] = select[1].xpath('text()').get()
+                league['img'] = img_url + str(select[1].xpath('@href').get()).split('/')[4].zfill(6) + '.png'
             else:
                 team['team_id'] = str(select[0].xpath('@href').get()).split('/')[4]
-                team['img'] = img_url + str(select[0].xpath('@href').get()).split('/')[4].zfill(6) + '.png'
                 team['name'] = select[0].xpath('text()').get()
+                team['img'] = img_url + str(select[0].xpath('@href').get()).split('/')[4].zfill(6) + '.png'
 
         item['league'] = league
         item['team'] = team
@@ -74,8 +74,9 @@ class PlayersSpider(Spider):
             if i == len(ds) - 1:
                 item[name] = item_detail.xpath('td/a/text()').get()
             else:
-                if name != 'team' or name != "league":
-                    item[name] = item_detail.xpath('td/text()').extract()[1]
+                if name != 'team':
+                    if name != 'league':
+                        item[name] = item_detail.xpath('td/text()').extract()[1]
 
         item['player_stats'] = json.loads(str(detail.xpath('script/text()').re('.*levelStats.*'))[25:][:-3])
 
