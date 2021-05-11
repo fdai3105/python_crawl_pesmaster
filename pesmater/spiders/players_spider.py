@@ -27,7 +27,7 @@ class PlayersSpider(Spider):
             yield scrapy.Request(url=urljoin(response.url, url), callback=self.parse_detail,
                                  meta={'avatar': avatar, 'url': urljoin(response.url, url)})
 
-        if self.page <= 100:
+        if self.page <= 0:
             self.page += 1
             url = 'https://www.pesmaster.com/pes-2021/search/search.php?type=default&sort=ovr&sort_order=desc&page=' \
                   + str(self.page)
@@ -41,7 +41,7 @@ class PlayersSpider(Spider):
         team = PesTeam()
 
         select = detail.xpath('div/a[@class="namelink"]')
-        img_url = 'https://www.pesmaster.com/pes-2021/graphics/teamlogos/e_'
+        img_url = '/pes-2021/graphics/teamlogos/e_'
         if select:
             if len(select) > 1:
                 team['team_id'] = str(select[0].xpath('@href').get()).split('/')[4]
@@ -61,9 +61,9 @@ class PlayersSpider(Spider):
         item['ovr'] = detail.xpath('figure/div[@class="player-card-ovr"]/text()').extract_first()
         item['pos'] = detail.xpath('figure/div[@class="player-card-position"]/abbr/text()').extract_first()
         item['img_avatar'] = response.meta['avatar']
-        item['img_card'] = detail.xpath('figure/picture/source/@data-srcset').extract_first()
+        item['img_card'] = detail.xpath('figure/picture')[1].xpath('source/@data-srcset').get()
         item['desc'] = detail.xpath('div[@class="top-info"]/p/text()').get()
-        item['player_max_level'] = detail.xpath('div[@class="level-slider-container"]/input/@max').get()
+        item['max_level'] = detail.xpath('div[@class="level-slider-container"]/input/@max').get()
         item['url'] = response.meta['url']
 
         ds = detail.xpath('table[@class="player-info"]/tbody/tr')

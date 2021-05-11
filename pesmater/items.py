@@ -46,6 +46,6 @@ class PesPlayer(scrapy.Item):
     player_skills = scrapy.Field()
     img_avatar = scrapy.Field()
     img_card = scrapy.Field()
-    player_max_level = scrapy.Field()
+    max_level = scrapy.Field()
     url = scrapy.Field()
     player_stats = scrapy.Field()
